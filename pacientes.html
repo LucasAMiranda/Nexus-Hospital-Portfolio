@@ -1,0 +1,78 @@
+
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Pacientes - Nexus Hospital</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <div class="logo"><img src="assets/logo.svg" width="120" alt="logo"></div>
+      <nav class="nav">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="pacientes.html" class="active">Pacientes</a>
+        <a href="consultas.html">Consultas</a>
+        <a href="funcionarios.html">Funcionários</a>
+        <a href="#" onclick="logout()" style="margin-top:12px">Sair</a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <div class="header"><h1>Pacientes</h1></div>
+      <div class="table-box">
+        <h3>Cadastrar Paciente</h3>
+        <form id="formPaciente" class="row">
+          <input id="pNome" placeholder="Nome" required>
+          <input id="pNascimento" placeholder="Data Nascimento (YYYY-MM-DD)" required>
+          <input id="pCpf" placeholder="CPF" required>
+          <button class="btn" type="submit">Salvar</button>
+        </form>
+      </div>
+
+      <div class="table-box">
+        <h3>Lista de Pacientes</h3>
+        <table id="tblPacientes"><thead><tr><th>Nome</th><th>Nascimento</th><th>CPF</th><th></th></tr></thead><tbody></tbody></table>
+      </div>
+    </main>
+  </div>
+
+<script src="app.js"></script>
+<script>
+requireAuth();
+ensureSampleData();
+
+function renderPacientes(){
+  const rows = read('hd_pacientes');
+  const tbody = document.querySelector('#tblPacientes tbody');
+  tbody.innerHTML = '';
+  rows.forEach(r=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML = `<td>${r.nome}</td><td>${r.nascimento}</td><td>${r.cpf}</td><td><button class="small" onclick="removePaciente(${r.id})">Excluir</button></td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+document.getElementById('formPaciente').onsubmit = function(e){
+  e.preventDefault();
+  const nome = document.getElementById('pNome').value.trim();
+  const nasc = document.getElementById('pNascimento').value.trim();
+  const cpf = document.getElementById('pCpf').value.trim();
+  const list = read('hd_pacientes');
+  const id = Date.now();
+  list.push({id,nome,nascimento:nasc,cpf});
+  write('hd_pacientes', list);
+  renderPacientes();
+  this.reset();
+};
+
+function removePaciente(id){
+  const arr = read('hd_pacientes').filter(x=>x.id!==id);
+  write('hd_pacientes', arr);
+  renderPacientes();
+}
+
+renderPacientes();
+</script>
+</body>
+</html>

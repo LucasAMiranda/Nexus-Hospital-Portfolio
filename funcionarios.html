@@ -1,0 +1,67 @@
+
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Funcionários - Nexus Hospital</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <div class="logo"><img src="assets/logo.svg" width="120" alt="logo"></div>
+      <nav class="nav">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="pacientes.html">Pacientes</a>
+        <a href="consultas.html">Consultas</a>
+        <a href="funcionarios.html" class="active">Funcionários</a>
+        <a href="#" onclick="logout()" style="margin-top:12px">Sair</a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <div class="header"><h1>Funcionários</h1></div>
+      <div class="table-box">
+        <h3>Adicionar Funcionário</h3>
+        <form id="formFunc" class="row">
+          <input id="fNome" placeholder="Nome" required>
+          <input id="fCargo" placeholder="Cargo (Ex: Médico, Enfermeiro, Administrativo)" required>
+          <button class="btn" type="submit">Adicionar</button>
+        </form>
+      </div>
+
+      <div class="table-box">
+        <h3>Lista</h3>
+        <table id="tblFunc"><thead><tr><th>Nome</th><th>Cargo</th><th></th></tr></thead><tbody></tbody></table>
+      </div>
+    </main>
+  </div>
+
+<script src="app.js"></script>
+<script>
+requireAuth();
+ensureSampleData();
+
+function renderFuncs(){
+  const rows = read('hd_funcionarios');
+  const tbody = document.querySelector('#tblFunc tbody'); tbody.innerHTML='';
+  rows.forEach(r=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML = `<td>${r.nome}</td><td>${r.cargo}</td><td><button class="small" onclick="removeFunc(${r.id})">Excluir</button></td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+document.getElementById('formFunc').onsubmit = function(e){
+  e.preventDefault();
+  const nome = document.getElementById('fNome').value.trim();
+  const cargo = document.getElementById('fCargo').value.trim();
+  const arr = read('hd_funcionarios'); arr.push({id:Date.now(), nome, cargo}); write('hd_funcionarios', arr);
+  renderFuncs(); this.reset();
+};
+
+function removeFunc(id){ const arr = read('hd_funcionarios').filter(x=>x.id!==id); write('hd_funcionarios', arr); renderFuncs(); }
+
+renderFuncs();
+</script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dashboard - Nexus Hospital</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <div class="logo"><img src="assets/logo.svg" width="120" alt="logo"></div>
+      <nav class="nav">
+        <a href="dashboard.html" class="active">Dashboard</a>
+        <a href="pacientes.html">Pacientes</a>
+        <a href="consultas.html">Consultas</a>
+        <a href="funcionarios.html">Funcionários</a>
+        <a href="#" onclick="logout()" style="margin-top:12px">Sair</a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <div class="header">
+        <h1>Dashboard</h1>
+        <div id="userGreeting"></div>
+      </div>
+
+      <div class="card-row">
+        <div class="card"><h3>Pacientes</h3><div style="font-size:28px" id="cardPacientes">0</div></div>
+        <div class="card"><h3>Consultas</h3><div style="font-size:28px" id="cardConsultas">0</div></div>
+        <div class="card"><h3>Funcionários</h3><div style="font-size:28px" id="cardFuncionarios">0</div></div>
+      </div>
+
+      <div style="display:flex;gap:18px;flex-wrap:wrap">
+        <div class="table-box" style="flex:1;min-width:360px">
+          <h3>Próximas Consultas</h3>
+          <table id="tableConsultas">
+            <thead><tr><th>Paciente</th><th>Data</th><th>Hora</th><th>Médico</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="table-box" style="width:360px">
+          <h3>Funcionários</h3>
+          <canvas id="chartFuncionarios" width="300" height="240"></canvas>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+<script src="app.js"></script>
+<script>
+const user = requireAuth();
+ensureSampleData();
+document.getElementById('userGreeting').innerText = user ? user.name : '';
+
+function refreshCounts(){
+  document.getElementById('cardPacientes').innerText = countPacientes();
+  document.getElementById('cardConsultas').innerText = countConsultas();
+  document.getElementById('cardFuncionarios').innerText = countFuncionarios();
+  // fill consultas table (join paciente name)
+  const consultas = read('hd_consultas');
+  const pacientes = read('hd_pacientes');
+  const tbody = document.querySelector('#tableConsultas tbody');
+  tbody.innerHTML = '';
+  consultas.forEach(c=>{
+    const p = pacientes.find(x=>x.id===c.pacienteId) || {nome:'-'};
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${p.nome}</td><td>${c.data}</td><td>${c.hora}</td><td>${c.medico}</td>`;
+    tbody.appendChild(tr);
+  });
+  // chart for funcionarios
+  const funcs = read('hd_funcionarios');
+  const meds = funcs.filter(f=>f.cargo && f.cargo.toLowerCase().includes('méd')).length;
+  const enf = funcs.filter(f=>f.cargo && f.cargo.toLowerCase().includes('enfer')).length;
+  const adm = funcs.length - meds - enf;
+  const ctx = document.getElementById('chartFuncionarios').getContext('2d');
+  new Chart(ctx,{type:'pie',data:{labels:['Médicos','Enfermeiros','Administrativo'],datasets:[{data:[meds,enf,adm]}]}});
+}
+
+refreshCounts();
+</script>
+</body>
+</html>

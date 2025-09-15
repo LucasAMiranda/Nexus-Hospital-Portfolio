@@ -1,0 +1,80 @@
+
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Login - Nexus Hospital</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body id="form">
+  <div class="center">
+    <div class="auth-card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <img src="assets/logo.svg" width="120" alt="logo">
+        <div>
+          <h2>Bem-vindo</h2>
+          <div class="footer-note">Acesse sua conta para ver o dashboard</div>
+        </div>
+      </div>
+
+      <div id="authForms">
+        <form id="loginForm">
+          <input type="email" id="loginEmail" placeholder="Email" style="width:100%;margin-bottom:8px" required>
+          <input type="password" id="loginPassword" placeholder="Senha" style="width:100%;margin-bottom:8px" required>
+          <div style="display:flex;gap:8px">
+            <button class="btn" type="submit">Entrar</button>
+            <button type="button" class="btn small" id="showRegister">Criar conta</button>
+          </div>
+        </form>
+
+        <form id="registerForm" style="display:none">
+          <input type="text" id="regName" placeholder="Nome completo" style="width:100%;margin-bottom:8px" required>
+          <input type="email" id="regEmail" placeholder="Email" style="width:100%;margin-bottom:8px" required>
+          <input type="password" id="regPassword" placeholder="Senha" style="width:100%;margin-bottom:8px" required>
+          <div style="display:flex;gap:8px">
+            <button class="btn" type="submit">Criar conta</button>
+            <button type="button" class="btn small" id="showLogin">Voltar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+<script src="app.js"></script>
+<script>
+// Initialize sample data
+ensureSampleData();
+
+document.getElementById('showRegister').onclick = ()=>{
+  document.getElementById('loginForm').style.display='none';
+  document.getElementById('registerForm').style.display='block';
+};
+document.getElementById('showLogin').onclick = ()=>{
+  document.getElementById('loginForm').style.display='block';
+  document.getElementById('registerForm').style.display='none';
+};
+
+document.getElementById('registerForm').onsubmit = function(e){
+  e.preventDefault();
+  const name = document.getElementById('regName').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const pass = document.getElementById('regPassword').value.trim();
+  const res = registerUser(name,email,pass);
+  if(!res.ok){ alert(res.msg); return; }
+  alert('Conta criada! Faça login.');
+  document.getElementById('loginForm').style.display='block';
+  document.getElementById('registerForm').style.display='none';
+};
+
+document.getElementById('loginForm').onsubmit = function(e){
+  e.preventDefault();
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass = document.getElementById('loginPassword').value.trim();
+  const res = loginUser(email,pass);
+  if(!res.ok){ alert(res.msg); return; }
+  window.location = "dashboard.html";
+};
+</script>
+</body>
+</html>

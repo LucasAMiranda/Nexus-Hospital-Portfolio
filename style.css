@@ -1,0 +1,82 @@
+
+/* Global */
+*{box-sizing:border-box;margin:0;padding:0;font-family:Inter, Arial, sans-serif}
+body{background:#f3f6f8;color:#102a43;min-height:100vh}
+.container{display:flex;min-height:100vh}
+.sidebar{width:240px;background:#0f6b6f;color:#fff;padding:28px;border-top-left-radius:12px;border-bottom-left-radius:12px;display:flex;flex-direction:column;gap:18px}
+.sidebar .logo{display:flex;align-items:center;gap:12px}
+.sidebar h2{font-size:20px}
+.nav{margin-top:12px}
+.nav a{display:block;color:rgba(255,255,255,0.95);padding:10px;border-radius:8px;margin-bottom:6px;text-decoration:none}
+.nav a.active, .nav a:hover{background:rgba(0,0,0,0.08)}
+
+.main{flex:1;padding:28px}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.header h1{font-size:28px;color:#0b3b3b}
+.card-row{display:flex;gap:18px;margin-bottom:22px}
+.card{flex:1;background:#fff;padding:20px;border-radius:10px;box-shadow:0 6px 18px rgba(7,22,33,0.06)}
+.cards h2{font-size:20px;margin-bottom:8px}
+
+.table-box{background:#fff;padding:18px;border-radius:10px;box-shadow:0 6px 18px rgba(7,22,33,0.06);margin-bottom:18px}
+table{width:100%;border-collapse:collapse}
+th,td{padding:10px;border-bottom:1px solid #eef1f3;text-align:left}
+form.row{display:flex;gap:12px;flex-wrap:wrap}
+form.row input, form.row select{padding:8px;border-radius:6px;border:1px solid #d9e2ec}
+.btn{background:#0f6b6f;color:#fff;border:none;padding:10px 14px;border-radius:8px;cursor:pointer}
+.small{padding:6px 10px;font-size:14px}
+
+.center{display:flex;align-items:center;justify-content:center;height:100vh}
+.auth-card{background:#fff;padding:28px;border-radius:12px;box-shadow:0 8px 30px rgba(7,22,33,0.08);width:420px}
+.auth-card h2{margin-bottom:12px}
+
+.footer-note{font-size:13px;color:#6b7a7b;margin-top:12px}
+
+
+/* Fundo da página de login/cadastro */
+#form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: url("assets/hospital-bg.png") no-repeat center center/cover;
+}
+
+/* Card de login/cadastro */
+#authForms form {
+  background: rgba(255, 255, 255, 0.92);
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  max-width: 400px;
+  width: 100%;
+}
+
+/* Botões */
+.btn {
+  flex: 1;
+  background: #006d77;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  background: #00525a;
+}
+
+.btn.small {
+  background: #83c5be;
+  color: #000;
+}
+
+
+/* Responsive */
+@media(max-width:900px){
+  .sidebar{display:none}
+  .card-row{flex-direction:column}
+  .container{flex-direction:column}
+  .main{padding:18px}
+}

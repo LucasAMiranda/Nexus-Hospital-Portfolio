@@ -1,0 +1,85 @@
+
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Consultas - Nexus Hospital</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <div class="logo"><img src="assets/logo.svg" width="120" alt="logo"></div>
+      <nav class="nav">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="pacientes.html">Pacientes</a>
+        <a href="consultas.html" class="active">Consultas</a>
+        <a href="funcionarios.html">Funcionários</a>
+        <a href="#" onclick="logout()" style="margin-top:12px">Sair</a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <div class="header"><h1>Consultas</h1></div>
+      <div class="table-box">
+        <h3>Agendar Consulta</h3>
+        <form id="formConsulta" class="row">
+          <select id="cPaciente"></select>
+          <input id="cData" type="date" required>
+          <input id="cHora" type="time" required>
+          <input id="cMedico" placeholder="Médico" required>
+          <button class="btn" type="submit">Agendar</button>
+        </form>
+      </div>
+
+      <div class="table-box">
+        <h3>Lista de Consultas</h3>
+        <table id="tblConsultas"><thead><tr><th>Paciente</th><th>Data</th><th>Hora</th><th>Médico</th><th></th></tr></thead><tbody></tbody></table>
+      </div>
+    </main>
+  </div>
+
+<script src="app.js"></script>
+<script>
+requireAuth();
+ensureSampleData();
+
+function refreshPacienteSelect(){
+  const sel = document.getElementById('cPaciente');
+  sel.innerHTML = '';
+  read('hd_pacientes').forEach(p=>{
+    const opt = document.createElement('option');
+    opt.value = p.id; opt.textContent = p.nome;
+    sel.appendChild(opt);
+  });
+}
+function renderConsultas(){
+  const trBody = document.querySelector('#tblConsultas tbody'); trBody.innerHTML='';
+  const consultas = read('hd_consultas'); const pacientes = read('hd_pacientes');
+  consultas.forEach(c=>{
+    const p = pacientes.find(x=>x.id===c.pacienteId) || {nome:'-'};
+    const tr=document.createElement('tr');
+    tr.innerHTML = `<td>${p.nome}</td><td>${c.data}</td><td>${c.hora}</td><td>${c.medico}</td><td><button class="small" onclick="removeConsulta(${c.id})">Excluir</button></td>`;
+    trBody.appendChild(tr);
+  });
+}
+
+document.getElementById('formConsulta').onsubmit = function(e){
+  e.preventDefault();
+  const pacienteId = parseInt(document.getElementById('cPaciente').value);
+  const data = document.getElementById('cData').value;
+  const hora = document.getElementById('cHora').value;
+  const medico = document.getElementById('cMedico').value.trim();
+  const arr = read('hd_consultas'); arr.push({id:Date.now(), pacienteId, data, hora, medico}); write('hd_consultas', arr);
+  renderConsultas();
+  this.reset();
+  refreshPacienteSelect();
+};
+
+function removeConsulta(id){
+  const arr = read('hd_consultas').filter(x=>x.id!==id); write('hd_consultas', arr); renderConsultas();
+}
+
+refreshPacienteSelect(); renderConsultas();
+</script>
+</body>
+</html>
